@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Review Dr. {{ doctor.name }} | MediCare+{% endblock title %}
+
+{% block extra_content %}
+<div class="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-50 py-12">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6">
+        <div class="bg-white rounded-3xl p-8 border-2 border-yellow-300 shadow-2xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 mx-auto bg-gradient-to-br from-yellow-500 to-orange-600 rounded-3xl flex items-center justify-center mb-6 shadow-2xl">
+                    <i class="fas fa-star text-white text-3xl"></i>
+                </div>
+                <h1 class="text-3xl font-black text-gray-900 mb-3">
+                    {% if existing_review %}Update Your Review{% else %}Write a Review{% endif %}
+                </h1>
+                <p class="text-xl text-gray-600">Share your experience with Dr. {{ doctor.name }}</p>
+            </div>
+
+            <!-- Doctor Info -->
+            <div class="flex items-center gap-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-300 mb-8 shadow-lg">
+                {% if doctor.image %}
+                    <img src="{{ doctor.image.url }}" 
+                         alt="Dr. {{ doctor.name }}" 
+                         class="w-20 h-20 rounded-2xl object-cover border-4 border-blue-200 shadow-xl">
+                {% else %}
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border-4 border-blue-200 shadow-xl">
+                        <i class="fas fa-user-md text-blue-400 text-2xl"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <h3 class="text-2xl font-black text-gray-900">Dr. {{ doctor.name }}</h3>
+                    <p class="text-blue-600 font-bold text-lg mt-1">{{ doctor.get_specialization_display }}</p>
+                </div>
+            </div>
+
+            <!-- Review Form -->
+            <form method="post" class="space-y-8">
+                {% csrf_token %}
+                
+                <!-- Rating -->
+                <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-6 border-2 border-yellow-300">
+                    <label class="block text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-star text-white"></i>
+                        </div>
+                        Your Rating
+                    </label>
+                    <div class="flex justify-center space-x-4" id="rating-stars">
+                        {% for i in "12345" %}
+                            <button type="button" 
+                                    class="text-4xl rating-star transition-all duration-300 transform hover:scale-110 {% if existing_review and forloop.counter <= existing_review.rating %}text-yellow-400{% else %}text-gray-300{% endif %}"
+                                    data-rating="{{ forloop.counter }}">
+                                <i class="fas fa-star"></i>
+                            </button>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="rating" id="rating-value" 
+                           value="{% if existing_review %}{{ existing_review.rating }}{% else %}5{% endif %}">
+                    <p class="text-center text-gray-600 mt-4 font-semibold" id="rating-text">
+                        {% if existing_review %}
+                            {% if existing_review.rating == 5 %}Excellent
+                            {% elif existing_review.rating == 4 %}Very Good
+                            {% elif existing_review.rating == 3 %}Good
+                            {% elif existing_review.rating == 2 %}Fair
+                            {% else %}Poor{% endif %}
+                        {% else %}Excellent{% endif %}
+                    </p>
+                </div>
+
+                <!-- Comment -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-300">
+                    <label for="comment" class="block text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-700 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-edit text-white"></i>
+                        </div>
+                        Your Review
+                    </label>
+                    <textarea name="comment" id="comment" rows="6" 
+                              class="w-full border-2 border-purple-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white shadow-lg resize-none"
+                              placeholder="Share your experience with this doctor... What did you like? How was the service? Any suggestions?">{% if existing_review %}{{ existing_review.comment }}{% endif %}</textarea>
+                    <p class="text-sm text-gray-600 mt-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-purple-500"></i>
+                        Your honest feedback helps other patients make better decisions
+                    </p>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-black py-4 px-8 rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-4 text-lg shadow-2xl">
+                        <div class="w-10 h-10 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        {% if existing_review %}Update Review{% else %}Submit Review{% endif %}
+                    </button>
+                    <a href="{% url 'doctor_detail' doctor.id %}" 
+                       class="flex-1 bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-black py-4 px-8 rounded-2xl border-2 border-gray-400 hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-4 text-lg shadow-2xl">
+                        <div class="w-10 h-10 bg-gray-500 bg-opacity-10 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Review Guidelines -->
+            <div class="mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-300">
+                <h4 class="font-bold text-blue-900 text-lg mb-3 flex items-center gap-3">
+                    <i class="fas fa-lightbulb text-blue-500"></i>
+                    Review Guidelines
+                </h4>
+                <ul class="text-blue-800 space-y-2 text-sm">
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check-circle text-green-500 text-xs"></i>
+                        Be honest and specific about your experience
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check-circle text-green-500 text-xs"></i>
+                        Focus on the doctor's expertise and bedside manner
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check-circle text-green-500 text-xs"></i>
+                        Mention wait times and appointment experience
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-check-circle text-green-500 text-xs"></i>
+                        Avoid personal information and medical advice
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.rating-star');
+    const ratingValue = document.getElementById('rating-value');
+    const ratingText = document.getElementById('rating-text');
+    
+    const ratingLabels = {
+        1: 'Poor',
+        2: 'Fair',
+        3: 'Good',
+        4: 'Very Good',
+        5: 'Excellent'
+    };
+
+    function updateRating(rating) {
+        ratingValue.value = rating;
+        ratingText.textContent = ratingLabels[rating];
+        
+        // Update star colors and animations
+        stars.forEach(s => {
+            const starRating = s.getAttribute('data-rating');
+            if (starRating <= rating) {
+                s.classList.remove('text-gray-300');
+                s.classList.add('text-yellow-400');
+                s.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    s.style.transform = 'scale(1)';
+                }, 150);
+            } else {
+                s.classList.remove('text-yellow-400');
+                s.classList.add('text-gray-300');
+                s.style.transform = 'scale(1)';
+            }
+        });
+    }
+
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.getAttribute('data-rating'));
+            updateRating(rating);
+        });
+
+        star.addEventListener('mouseenter', function() {
+            const rating = parseInt(this.getAttribute('data-rating'));
+            stars.forEach(s => {
+                const starRating = s.getAttribute('data-rating');
+                if (starRating <= rating) {
+                    s.style.transform = 'scale(1.1)';
+                }
+            });
+        });
+
+        star.addEventListener('mouseleave', function() {
+            stars.forEach(s => {
+                s.style.transform = 'scale(1)';
+            });
+        });
+    });
+
+    // Initialize with current rating
+    updateRating(parseInt(ratingValue.value));
+});
+</script>
+{% endblock extra_content %}

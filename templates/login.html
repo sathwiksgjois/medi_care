@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login | MediCare+{% endblock title %}
+
+{% block extra_content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 flex flex-col justify-center">
+    <div class="max-w-md mx-auto bg-white rounded-3xl border-2 border-blue-300 shadow-2xl p-10">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center mb-6 shadow-2xl">
+                <i class="fas fa-user-md text-white text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-black text-gray-900 mb-3">Welcome Back</h1>
+            <p class="text-xl text-gray-600">Sign in to your MediCare+ account</p>
+        </div>
+
+        <!-- Login Form -->
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border-2 border-red-300 flex items-center gap-4 shadow-lg">
+                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                </div>
+                <span class="font-bold text-red-700 text-lg">Invalid username or password. Please try again.</span>
+            </div>
+            {% endif %}
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-300 flex items-center gap-4 shadow-lg">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-check-circle text-white text-xl"></i>
+                    </div>
+                    <span class="font-bold text-green-700 text-lg">{{ message }}</span>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-300">
+                <label for="username" class="block text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    Username
+                </label>
+                <input type="text" 
+                       name="username" 
+                       id="username"
+                       required 
+                       class="w-full border-2 border-blue-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white shadow-lg"
+                       placeholder="Enter your username">
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-300">
+                <label for="password" class="block text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-700 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-lock text-white"></i>
+                    </div>
+                    Password
+                </label>
+                <input type="password" 
+                       name="password" 
+                       id="password"
+                       required 
+                       class="w-full border-2 border-purple-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white shadow-lg"
+                       placeholder="Enter your password">
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black py-5 px-8 rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-4 text-xl shadow-2xl">
+                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+                Sign In to Account
+            </button>
+        </form>
+
+        <!-- Register Link -->
+        <div class="text-center mt-10 pt-10 border-t-2 border-gray-300">
+            <p class="text-gray-600 text-lg mb-4">Don't have an account?</p>
+            <a href="{% url 'register' %}" 
+               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-3 shadow-lg">
+                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                Create Account
+            </a>
+        </div>
+
+        <!-- Support Information -->
+        <div class="mt-8 text-center">
+            <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-6 border-2 border-gray-300">
+                <p class="text-gray-700 font-semibold text-lg mb-3">Need help with your account?</p>
+                <a href="mailto:medicareplus.support@gmail.com" 
+                   class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-2">
+                    <i class="fas fa-envelope"></i>
+                    Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock extra_content %}

@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Appointment Confirmed | MediCare+{% endblock title %}
+
+{% block extra_content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+    <!-- Success Card -->
+    <div class="bg-white rounded-3xl p-10 text-center border-2 border-green-300 shadow-2xl hover:shadow-3xl transition-all duration-500">
+      <!-- Success Icon -->
+      <div class="w-28 h-28 mx-auto bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mb-8 shadow-2xl">
+        <i class="fas fa-check-circle text-white text-5xl"></i>
+      </div>
+      
+      <!-- Main Heading -->
+      <h1 class="text-4xl font-black text-gray-900 mb-4">Appointment Confirmed!</h1>
+      <p class="text-xl text-gray-700 mb-10">Your appointment has been successfully booked with</p>
+
+      <!-- Doctor Information -->
+      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 mb-10 border-2 border-blue-300 shadow-lg">
+        <div class="flex items-center justify-center gap-6 mb-6">
+          {% if appointment.doctor.image %}
+            <img src="{{ appointment.doctor.image.url }}" 
+                 alt="Dr. {{ appointment.doctor.name }}" 
+                 class="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-xl">
+          {% else %}
+            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center border-4 border-white shadow-xl">
+              <i class="fas fa-user-md text-blue-400 text-2xl"></i>
+            </div>
+          {% endif %}
+          <div class="text-left">
+            <h2 class="text-2xl font-black text-gray-900">Dr. {{ appointment.doctor.name }}</h2>
+            <p class="text-blue-600 font-semibold text-lg">{{ appointment.doctor.get_specialization_display }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment Details -->
+      <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-3xl p-8 mb-10 border-2 border-gray-300 shadow-lg">
+        <h3 class="text-2xl font-black text-gray-900 mb-6">Appointment Details</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+          <div class="flex items-center gap-4 bg-white rounded-2xl p-4 border-2 border-gray-200 hover:border-blue-300 transition-all duration-300">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-user text-white"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 font-semibold">Patient Name</p>
+              <p class="font-bold text-gray-900 text-lg">{{ appointment.patient_name }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 bg-white rounded-2xl p-4 border-2 border-gray-200 hover:border-blue-300 transition-all duration-300">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-calendar-check text-white"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 font-semibold">Date</p>
+              <p class="font-bold text-gray-900 text-lg">{{ appointment.date }}</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4 bg-white rounded-2xl p-4 border-2 border-gray-200 hover:border-blue-300 transition-all duration-300">
+            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-clock text-white"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 font-semibold">Time</p>
+              <p class="font-bold text-gray-900 text-lg">{{ appointment.time }}</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4 bg-white rounded-2xl p-4 border-2 border-gray-200 hover:border-blue-300 transition-all duration-300">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-hospital text-white"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 font-semibold">Type</p>
+              <p class="font-bold text-gray-900 text-lg">In-Person</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4 bg-white rounded-2xl p-4 border-2 border-gray-200 hover:border-green-300 transition-all duration-300">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-rupee-sign text-white"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 font-semibold">Fee</p>
+              <p class="font-bold text-green-600 text-xl">₹{{ appointment.fee }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Details -->
+        <div class="mt-8 pt-8 border-t-2 border-gray-300">
+          <div class="flex items-center gap-4 bg-white rounded-2xl p-6 border-2 border-orange-200 hover:border-orange-300 transition-all duration-300">
+            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-map-marker-alt text-white"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-sm text-gray-500 font-semibold">Hospital & Location</p>
+              <p class="font-bold text-gray-900 text-lg">{{ appointment.doctor.hospital }}</p>
+              <p class="text-gray-600">{{ appointment.doctor.address }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Receipt Download Section -->
+      <div class="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-3xl p-6 mb-8 border-2 border-yellow-300 shadow-lg">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg mt-1">
+            <i class="fas fa-download text-white text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold text-yellow-800 text-lg mb-3">Receipt Download</h4>
+            {% if can_download_receipt %}
+              <p class="text-yellow-700 mb-4">Your receipt is now available for download.</p>
+              <a href="{% url 'download_receipt' appointment.id %}" 
+                 class="bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold py-3 px-6 rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-3">
+                <i class="fas fa-download"></i>
+                Download Receipt
+              </a>
+            {% else %}
+              <p class="text-yellow-700 flex items-center gap-2">
+                <i class="fas fa-clock text-yellow-600"></i>
+                Receipt will be available for download 1 hour before your appointment time.
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- In-Person Instructions -->
+      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-6 mb-8 border-2 border-blue-300 shadow-lg text-left">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg mt-1">
+            <i class="fas fa-hospital text-white text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold text-blue-800 text-lg mb-3">In-Person Appointment Instructions</h4>
+            <ul class="text-blue-700 space-y-2">
+              <li class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center">
+                  <span class="text-blue-700 font-bold text-sm">1</span>
+                </div>
+                Please arrive 15 minutes before your scheduled time
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center">
+                  <span class="text-blue-700 font-bold text-sm">2</span>
+                </div>
+                Bring your ID and any relevant medical reports
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center">
+                  <span class="text-blue-700 font-bold text-sm">3</span>
+                </div>
+                Location: {{ appointment.doctor.hospital }}, {{ appointment.doctor.address }}
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center">
+                  <span class="text-blue-700 font-bold text-sm">4</span>
+                </div>
+                Download receipt 1 hour before appointment for verification
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+        {% if can_download_receipt %}
+          <!-- Download Receipt Button -->
+          <a href="{% url 'download_receipt' appointment.id %}" 
+             class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold py-4 px-8 rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg">
+            <i class="fas fa-download"></i>
+            Download Receipt
+          </a>
+        {% else %}
+          <!-- Disabled Download Button -->
+          <button disabled
+             class="bg-gradient-to-r from-gray-400 to-gray-500 text-white font-semibold py-4 px-8 rounded-2xl flex items-center justify-center gap-3 cursor-not-allowed shadow-lg">
+            <i class="fas fa-download"></i>
+            Download Receipt (Available 1 hour before)
+          </button>
+        {% endif %}
+        
+        <a href="{% url 'my_appointments' %}" 
+           class="bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold py-4 px-8 rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg">
+          <i class="fas fa-calendar-alt"></i>
+          View My Appointments
+        </a>
+        
+        <a href="{% url 'doctors' %}" 
+           class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 px-8 rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg">
+          <i class="fas fa-user-md"></i>
+          Book Another
+        </a>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl p-6 mb-8 border-2 border-gray-300">
+        <h4 class="font-bold text-gray-900 text-lg mb-4 text-center">Quick Actions</h4>
+        <div class="flex flex-wrap justify-center gap-6">
+          <a href="{% url 'doctor_detail' appointment.doctor.id %}" 
+             class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-2 text-sm">
+            <i class="fas fa-eye"></i>
+            View Doctor Profile
+          </a>
+          <a href="{% url 'cancel_appointment_confirmation' appointment.id %}" 
+             class="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-2 text-sm">
+            <i class="fas fa-times"></i>
+            Cancel Appointment
+          </a>
+          <a href="{% url 'home' %}" 
+             class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-2 text-sm">
+            <i class="fas fa-home"></i>
+            Back to Home
+          </a>
+        </div>
+      </div>
+
+      <!-- Support Information -->
+      <div class="mt-8 pt-8 border-t-2 border-gray-300">
+        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-300">
+          <p class="text-gray-700 mb-4 font-semibold">
+            Need to make changes? Contact our support team
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+            <a href="mailto:medicareplus.support@gmail.com" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-2">
+              <i class="fas fa-envelope"></i>
+              support@medicare.com
+            </a>
+            <span class="text-gray-600 font-semibold inline-flex items-center gap-2">
+              <i class="fas fa-phone"></i>
+              1-800-MEDICARE
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock extra_content %}

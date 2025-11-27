@@ -1,0 +1,283 @@
+:root {
+  --primary: #8b5cf6;
+  --secondary: #7c3aed;
+  --accent1: #10b981;
+  --accent2: #059669;
+  --accent3: #ef4444;
+  --accent4: #f59e0b;
+  --medical-purple: #7c3aed;
+  --health-pink: #db2777;
+}
+
+/* Enhanced Navigation Styles */
+.nav-modern {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-modern:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(219, 39, 119, 0.1));
+  transform: translateY(-2px);
+}
+
+.nav-modern.active {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(219, 39, 119, 0.15));
+}
+
+.nav-modern.active .nav-underline {
+  width: 80% !important;
+  left: 10% !important;
+}
+
+/* Mobile Menu */
+.mobile-menu-modern {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-modern.translate-x-0 {
+  transform: translateX(0);
+}
+
+.mobile-nav-modern {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.mobile-nav-modern:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(8px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Message Styles */
+.message-modern {
+  border-radius: 1rem;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.message-success-modern {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-left-color: var(--accent1);
+  color: #065f46;
+}
+
+.message-error-modern {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-left-color: var(--accent3);
+  color: #991b1b;
+}
+
+.message-warning-modern {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-left-color: var(--accent4);
+  color: #92400e;
+}
+
+.message-info-modern {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  border-left-color: var(--primary);
+  color: #7c3aed;
+}
+
+.message-close-modern {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.message-close-modern:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Footer Styles */
+.footer-modern {
+  display: flex;
+  align-items: center;
+  color: #d1d5db;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.footer-modern:hover {
+  color: white;
+  transform: translateX(8px);
+}
+
+.social-modern {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d1d5db;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.social-modern:hover {
+  color: white;
+  background: var(--primary);
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+}
+
+/* Button Styles */
+.auth-modern-login,
+.auth-modern-register,
+.logout-modern {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-modern-login:hover,
+.auth-modern-register:hover,
+.logout-modern:hover {
+  transform: translateY(-2px);
+}
+
+/* Medical Card Styles */
+.doctor-card-modern {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1.5rem;
+  border: 1px solid #e5e7eb;
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.doctor-card-modern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, var(--primary), var(--health-pink));
+}
+
+.doctor-card-modern:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(139, 92, 246, 0.15);
+  border-color: var(--primary);
+}
+
+/* Status Badges */
+.status-badge-modern {
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.status-confirmed-modern {
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.status-pending-modern {
+  background: linear-gradient(135deg, var(--accent4), #f97316);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.status-cancelled-modern {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: white;
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(139, 92, 246, 0.6); }
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+.glowing {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Gradient Text */
+.gradient-text-modern {
+  background: linear-gradient(135deg, var(--primary), var(--health-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Responsive Improvements */
+@media (max-width: 768px) {
+  .mobile-nav-modern {
+    padding: 0.875rem;
+    gap: 0.875rem;
+  }
+  
+  .message-modern {
+    padding: 1rem;
+    border-radius: 0.75rem;
+  }
+  
+  .social-modern {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .nav-modern,
+  .mobile-nav-modern,
+  .social-modern,
+  .footer-modern,
+  .auth-modern-login,
+  .auth-modern-register,
+  .logout-modern,
+  .doctor-card-modern {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .nav-modern,
+  footer,
+  #backToTop {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+  }
+}

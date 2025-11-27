@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search Results for "{{ q }}" | MediCare+{% endblock title %}
+
+{% block extra_content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <!-- Search Header -->
+    <div class="text-center mb-12">
+      <div class="w-24 h-24 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
+        <i class="fas fa-search text-white text-3xl"></i>
+      </div>
+      <h1 class="text-4xl font-black text-gray-900 mb-4">Search Results</h1>
+      <p class="text-xl text-gray-600">
+        {% if q %}
+          Showing results for "<span class="font-black text-blue-600">"{{ q }}"</span>"
+        {% else %}
+          Showing all doctors
+        {% endif %}
+      </p>
+      <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-4 border-2 border-green-300 inline-block mt-4">
+        <p class="text-gray-700 font-bold text-lg">{{ doctors|length }} doctor{{ doctors|pluralize }} found</p>
+      </div>
+    </div>
+
+    <!-- Search Form -->
+    <div class="max-w-2xl mx-auto mb-12">
+      <form method="get" action="{% url 'unified_search' %}" class="flex flex-col sm:flex-row gap-4">
+        <div class="flex-1">
+          <div class="relative">
+            <input 
+              type="text" 
+              name="q" 
+              value="{{ q }}"
+              placeholder="Search doctors by name, specialization, hospital, or city..." 
+              class="w-full border-2 border-blue-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-lg"
+            >
+            <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+          </div>
+        </div>
+        <button 
+          type="submit" 
+          class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold px-8 py-4 rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg"
+        >
+          <div class="w-8 h-8 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+            <i class="fas fa-search"></i>
+          </div>
+          Search
+        </button>
+        {% if q %}
+        <a 
+          href="{% url 'doctors' %}" 
+          class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-bold px-8 py-4 rounded-2xl border-2 border-gray-400 hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg"
+        >
+          <div class="w-8 h-8 bg-gray-500 bg-opacity-10 rounded-2xl flex items-center justify-center">
+            <i class="fas fa-times"></i>
+          </div>
+          Clear
+        </a>
+        {% endif %}
+      </form>
+    </div>
+
+    <!-- Search Results -->
+    {% if doctors %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for doctor in doctors %}
+      <div class="bg-white rounded-3xl border-2 border-gray-300 shadow-2xl hover:shadow-3xl hover:border-blue-300 transition-all duration-500 overflow-hidden group">
+        <!-- Doctor Image & Basic Info -->
+        <div class="p-8 text-center border-b-2 border-gray-300">
+          <div class="flex justify-center mb-6">
+            {% if doctor.image %}
+              <img src="{{ doctor.image.url }}" 
+                   alt="Dr. {{ doctor.name }} - {{ doctor.get_specialization_display }}" 
+                   class="w-28 h-28 rounded-2xl object-cover border-4 border-blue-200 shadow-xl group-hover:scale-110 transition-transform duration-500">
+            {% else %}
+              <div class="w-28 h-28 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border-4 border-blue-200 shadow-xl group-hover:scale-110 transition-transform duration-500">
+                <i class="fas fa-user-md text-blue-400 text-3xl"></i>
+              </div>
+            {% endif %}
+          </div>
+          
+          <h2 class="text-2xl font-black text-gray-900 mb-2">Dr. {{ doctor.name }}</h2>
+          <p class="text-blue-600 font-bold text-lg mb-4">{{ doctor.get_specialization_display }}</p>
+          
+          <!-- Quick Stats -->
+          <div class="flex justify-center gap-6 mb-4">
+            <span class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-2xl border-2 border-blue-200">
+              <i class="fas fa-briefcase-medical text-blue-500"></i>
+              <span class="font-bold">{{ doctor.experience }}+ yrs</span>
+            </span>
+            <span class="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-2xl border-2 border-green-200">
+              <i class="fas fa-rupee-sign text-green-500"></i>
+              <span class="font-bold">{{ doctor.display_fee }}</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Doctor Details -->
+        <div class="p-8">
+          <div class="space-y-4 mb-6">
+            <div class="flex items-center gap-3 text-gray-600">
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-hospital text-white text-sm"></i>
+              </div>
+              <div>
+                <span class="font-semibold">Hospital:</span>
+                <p class="text-gray-900 font-medium">{{ doctor.hospital }}</p>
+              </div>
+            </div>
+            {% if doctor.city %}
+            <div class="flex items-center gap-3 text-gray-600">
+              <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-map-marker-alt text-white text-sm"></i>
+              </div>
+              <div>
+                <span class="font-semibold">Location:</span>
+                <p class="text-gray-900 font-medium">{{ doctor.city }}</p>
+              </div>
+            </div>
+            {% endif %}
+            <div class="flex items-center gap-3 text-gray-600">
+              <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-calendar-check text-white text-sm"></i>
+              </div>
+              <div>
+                <span class="font-semibold">Booking:</span>
+                <p class="text-gray-900 font-medium">{{ doctor.get_booking_option_display }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="space-y-4">
+            <a href="{% url 'doctor_detail' doctor.id %}" 
+               class="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center font-bold py-4 px-6 rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg">
+              <div class="w-8 h-8 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+                <i class="fas fa-user-md"></i>
+              </div>
+              View Full Profile
+            </a>
+            
+            {% if user.is_authenticated %}
+              {% if doctor.booking_option == "online" or doctor.booking_option == "both" %}
+                <a href="{% url 'book_appointment' doctor.id 'online' %}" 
+                   class="block w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white text-center font-bold py-4 px-6 rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg">
+                  <div class="w-8 h-8 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-video"></i>
+                  </div>
+                  Book Online
+                </a>
+              {% endif %}
+            {% else %}
+              <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-4 border-2 border-yellow-300 text-center">
+                <div class="flex items-center justify-center gap-3 mb-3">
+                  <div class="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-exclamation-circle text-white"></i>
+                  </div>
+                  <p class="text-yellow-800 font-bold text-lg">Login to book appointments</p>
+                </div>
+                <a href="{% url 'login' %}?next={% url 'unified_search' %}?q={{ q|urlencode }}" 
+                   class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-2">
+                  <i class="fas fa-sign-in-alt"></i>
+                  Login Now
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- No Results State -->
+    {% else %}
+    <div class="text-center py-20 bg-white rounded-3xl border-2 border-gray-300 shadow-2xl">
+      <div class="w-32 h-32 bg-gradient-to-br from-gray-200 to-gray-300 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+        <i class="fas fa-search text-gray-400 text-5xl"></i>
+      </div>
+      <h3 class="text-3xl font-black text-gray-600 mb-4">No Doctors Found</h3>
+      <p class="text-gray-500 text-lg mb-8 max-w-md mx-auto">
+        {% if q %}
+          We couldn't find any doctors matching "<strong class="text-blue-600">{{ q }}</strong>". Try searching with different keywords.
+        {% else %}
+          No doctors available at the moment. Please check back later.
+        {% endif %}
+      </p>
+      <div class="flex flex-col sm:flex-row gap-6 justify-center mb-12">
+        <a href="{% url 'doctors' %}" 
+           class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg">
+          <div class="w-10 h-10 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+            <i class="fas fa-list"></i>
+          </div>
+          View All Doctors
+        </a>
+        <a href="{% url 'home' %}" 
+           class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg">
+          <div class="w-10 h-10 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+            <i class="fas fa-home"></i>
+          </div>
+          Back to Home
+        </a>
+      </div>
+      
+      <!-- Search Tips -->
+      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 border-2 border-blue-300 max-w-4xl mx-auto">
+        <h4 class="font-bold text-blue-900 text-2xl mb-6 flex items-center justify-center gap-3">
+          <i class="fas fa-lightbulb text-blue-500"></i>
+          Search Tips
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-blue-800">
+          <div class="flex items-start gap-4 bg-white rounded-2xl p-4 border-2 border-blue-200">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+              <i class="fas fa-user text-white text-sm"></i>
+            </div>
+            <span class="font-semibold">Try searching by doctor's name or specialization</span>
+          </div>
+          <div class="flex items-start gap-4 bg-white rounded-2xl p-4 border-2 border-blue-200">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+              <i class="fas fa-hospital text-white text-sm"></i>
+            </div>
+            <span class="font-semibold">Search by hospital name or city</span>
+          </div>
+          <div class="flex items-start gap-4 bg-white rounded-2xl p-4 border-2 border-blue-200">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+              <i class="fas fa-search text-white text-sm"></i>
+            </div>
+            <span class="font-semibold">Use broader terms for more results</span>
+          </div>
+          <div class="flex items-start gap-4 bg-white rounded-2xl p-4 border-2 border-blue-200">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+              <i class="fas fa-spell-check text-white text-sm"></i>
+            </div>
+            <span class="font-semibold">Check your spelling and try again</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Browse All Link -->
+    {% if doctors and q %}
+    <div class="text-center mt-16">
+      <div class="bg-white rounded-3xl p-8 border-2 border-purple-300 shadow-2xl">
+        <h3 class="text-2xl font-black text-gray-900 mb-4">Not finding what you're looking for?</h3>
+        <a href="{% url 'doctors' %}" 
+           class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-2xl hover:scale-105 transition-all duration-300 inline-flex items-center justify-center gap-3 shadow-lg">
+          <div class="w-10 h-10 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+            <i class="fas fa-list"></i>
+          </div>
+          Browse All Doctors
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock extra_content %}

@@ -1,0 +1,506 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MediCare+ - Premium Healthcare Experience | Book Doctor Appointments Online">
+  <meta name="theme-color" content="#7c3aed">
+  <title>{% block title %}MediCare+ | Premium Healthcare Experience{% endblock title %}</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    }
+  </style>
+</head>
+<body class="text-gray-900 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 font-['Inter'] antialiased">
+
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner" class="fixed inset-0 bg-white z-[100] flex items-center justify-center transition-opacity duration-500">
+    <div class="text-center">
+      <div class="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-gray-600 font-medium">Loading MediCare+</p>
+    </div>
+  </div>
+
+  <!-- Enhanced Navbar -->
+  <header class="bg-white/90 backdrop-blur-xl border-b border-gray-200/60 sticky top-0 z-50 shadow-lg">
+    <div class="w-full px-4 sm:px-6">
+      <!-- Main Navbar -->
+      <div class="flex items-center justify-between py-4">
+        <!-- Logo -->
+        <a href="{% url 'home' %}" class="flex items-center space-x-3 group transition-all duration-500 hover:scale-105">
+          <div class="relative">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/25 group-hover:shadow-purple-500/40 group-hover:rotate-3 transition-all duration-500">
+              <i class="fas fa-heart-pulse text-white text-xl"></i>
+            </div>
+            <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
+          </div>
+          <div class="flex flex-col">
+            <h1 class="text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">MediCare+</h1>
+            <p class="text-xs text-gray-500 font-medium tracking-wide">PREMIUM HEALTHCARE</p>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden lg:flex items-center space-x-1 bg-white/50 rounded-2xl px-2 py-1 backdrop-blur-sm border border-gray-200/50">
+          <a href="{% url 'home' %}" class="nav-modern group relative px-4 py-2.5 rounded-xl transition-all duration-300">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-home text-gray-600 group-hover:text-purple-600 transition-colors duration-300"></i>
+              <span class="font-semibold text-gray-700 group-hover:text-gray-900">Home</span>
+            </div>
+            <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full transition-all duration-300 group-hover:w-3/4 group-hover:left-1/4"></div>
+          </a>
+          
+          <a href="{% url 'doctors' %}" class="nav-modern group relative px-4 py-2.5 rounded-xl transition-all duration-300">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-user-md text-gray-600 group-hover:text-purple-600 transition-colors duration-300"></i>
+              <span class="font-semibold text-gray-700 group-hover:text-gray-900">Doctors</span>
+            </div>
+            <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full transition-all duration-300 group-hover:w-3/4 group-hover:left-1/4"></div>
+          </a>
+          
+          {% if user.is_authenticated %}
+          <a href="{% url 'my_appointments' %}" class="nav-modern group relative px-4 py-2.5 rounded-xl transition-all duration-300">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-calendar-check text-gray-600 group-hover:text-purple-600 transition-colors duration-300"></i>
+              <span class="font-semibold text-gray-700 group-hover:text-gray-900">Appointments</span>
+            </div>
+            <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full transition-all duration-300 group-hover:w-3/4 group-hover:left-1/4"></div>
+          </a>
+          
+          <a href="{% url 'profile' %}" class="nav-modern group relative px-4 py-2.5 rounded-xl transition-all duration-300">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-user-circle text-gray-600 group-hover:text-purple-600 transition-colors duration-300"></i>
+              <span class="font-semibold text-gray-700 group-hover:text-gray-900">Profile</span>
+            </div>
+            <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full transition-all duration-300 group-hover:w-3/4 group-hover:left-1/4"></div>
+          </a>
+          {% endif %}
+          
+          <a href="{% url 'all_reviews' %}" class="nav-modern group relative px-4 py-2.5 rounded-xl transition-all duration-300">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-star text-gray-600 group-hover:text-purple-600 transition-colors duration-300"></i>
+              <span class="font-semibold text-gray-700 group-hover:text-gray-900">Reviews</span>
+            </div>
+            <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full transition-all duration-300 group-hover:w-3/4 group-hover:left-1/4"></div>
+          </a>
+        </nav>
+
+        <!-- Right Section - Search & Auth -->
+        <div class="flex items-center space-x-3">
+          <!-- Search Bar -->
+          <div class="hidden md:flex items-center bg-white border border-gray-300/80 rounded-2xl px-4 py-2.5 transition-all duration-300 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/10 focus-within:border-purple-500 focus-within:shadow-lg focus-within:shadow-purple-500/20 focus-within:scale-105 w-60 lg:w-72">
+            <i class="fas fa-search text-gray-400 mr-3 text-sm transition-colors duration-300 focus-within:text-purple-500"></i>
+            <form action="{% url 'unified_search' %}" method="get" class="flex-1">
+              <input 
+                type="text" 
+                name="q" 
+                placeholder="Search doctors, specialties..." 
+                class="bg-transparent border-none focus:ring-0 placeholder-gray-400 text-gray-700 text-sm w-full focus:outline-none"
+                value="{{ request.GET.q }}"
+              >
+            </form>
+          </div>
+
+          <!-- Authentication -->
+          <div class="flex items-center space-x-2">
+            {% if user.is_authenticated %}
+              <div class="hidden xl:flex items-center space-x-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl px-4 py-2 border border-purple-200/60 shadow-sm">
+                <div class="text-right">
+                  <p class="text-xs font-semibold text-gray-600">Welcome back</p>
+                  <p class="text-sm font-bold text-gray-800">{{ user.username }}</p>
+                </div>
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
+                  <i class="fas fa-user text-white text-sm"></i>
+                </div>
+              </div>
+              <form method="post" action="{% url 'logout' %}" class="inline">
+                  {% csrf_token %}
+                  <button type="submit" class="logout-modern group relative overflow-hidden">
+                      <div class="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-pink-600 rounded-2xl text-white font-semibold shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 hover:scale-105">
+                          <i class="fas fa-sign-out-alt"></i>
+                          <span class="hidden sm:inline">Logout</span>
+                      </div>
+                  </button>
+              </form>
+            {% else %}
+              <div class="flex items-center space-x-2">
+                <a href="{% url 'login' %}" class="auth-modern-login group">
+                  <div class="flex items-center space-x-2 px-4 py-2.5 border-2 border-gray-300 rounded-2xl text-gray-700 font-semibold hover:border-purple-400 hover:text-purple-600 transition-all duration-300 hover:scale-105">
+                      <i class="fas fa-sign-in-alt"></i>
+                      <span class="hidden sm:inline">Login</span>
+                  </div>
+                </a>
+                <a href="{% url 'register' %}" class="auth-modern-register group relative overflow-hidden">
+                  <div class="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl text-white font-semibold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 hover:scale-105">
+                      <i class="fas fa-user-plus"></i>
+                      <span class="hidden sm:inline">Register</span>
+                  </div>
+                </a>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button class="lg:hidden w-12 h-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/40 transition-all duration-300 hover:scale-105 hover:rotate-180" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars text-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Mobile Menu -->
+    <div class="lg:hidden mobile-menu-modern fixed inset-0 bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 z-40 pt-24 px-6 transform -translate-x-full transition-transform duration-300" id="mobileMenu">
+      <button class="absolute top-8 right-6 text-white text-2xl hover:scale-110 transition-transform duration-300" onclick="toggleMobileMenu()">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <nav class="space-y-3">
+        <a href="{% url 'home' %}" class="mobile-nav-modern group" onclick="toggleMobileMenu()">
+          <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center group-hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+            <i class="fas fa-home text-white text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <span class="font-bold text-white text-lg">Home</span>
+            <p class="text-purple-200 text-sm">Welcome to MediCare+</p>
+          </div>
+          <i class="fas fa-chevron-right text-white/40 group-hover:text-white transition-colors duration-300"></i>
+        </a>
+        
+        <a href="{% url 'doctors' %}" class="mobile-nav-modern group" onclick="toggleMobileMenu()">
+          <div class="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center group-hover:bg-purple-500/30 transition-all duration-300 group-hover:scale-110">
+            <i class="fas fa-user-md text-purple-300 text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <span class="font-bold text-white text-lg">Find Doctors</span>
+            <p class="text-purple-200 text-sm">Browse specialists</p>
+          </div>
+          <i class="fas fa-chevron-right text-white/40 group-hover:text-white transition-colors duration-300"></i>
+        </a>
+        
+        {% if user.is_authenticated %}
+        <a href="{% url 'my_appointments' %}" class="mobile-nav-modern group" onclick="toggleMobileMenu()">
+          <div class="w-12 h-12 bg-green-500/20 rounded-2xl flex items-center justify-center group-hover:bg-green-500/30 transition-all duration-300 group-hover:scale-110">
+            <i class="fas fa-calendar-check text-green-300 text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <span class="font-bold text-white text-lg">My Appointments</span>
+            <p class="text-purple-200 text-sm">Manage bookings</p>
+          </div>
+          <i class="fas fa-chevron-right text-white/40 group-hover:text-white transition-colors duration-300"></i>
+        </a>
+        
+        <a href="{% url 'profile' %}" class="mobile-nav-modern group" onclick="toggleMobileMenu()">
+          <div class="w-12 h-12 bg-pink-500/20 rounded-2xl flex items-center justify-center group-hover:bg-pink-500/30 transition-all duration-300 group-hover:scale-110">
+            <i class="fas fa-user-circle text-pink-300 text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <span class="font-bold text-white text-lg">My Profile</span>
+            <p class="text-purple-200 text-sm">Personal settings</p>
+          </div>
+          <i class="fas fa-chevron-right text-white/40 group-hover:text-white transition-colors duration-300"></i>
+        </a>
+        {% endif %}
+        
+        <a href="{% url 'all_reviews' %}" class="mobile-nav-modern group" onclick="toggleMobileMenu()">
+          <div class="w-12 h-12 bg-yellow-500/20 rounded-2xl flex items-center justify-center group-hover:bg-yellow-500/30 transition-all duration-300 group-hover:scale-110">
+            <i class="fas fa-star text-yellow-300 text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <span class="font-bold text-white text-lg">Reviews</span>
+            <p class="text-purple-200 text-sm">Patient experiences</p>
+          </div>
+          <i class="fas fa-chevron-right text-white/40 group-hover:text-white transition-colors duration-300"></i>
+        </a>
+
+        <div class="pt-6 border-t border-purple-700/50 mt-6 space-y-4">
+          {% if user.is_authenticated %}
+            <div class="flex items-center space-x-4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm">
+              <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-user text-white text-xl"></i>
+              </div>
+              <div>
+                <p class="text-white font-bold text-lg">{{ user.username }}</p>
+                <p class="text-purple-200 text-sm">Premium Member</p>
+              </div>
+            </div>
+            <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="mobile-nav-modern text-rose-200 group w-full">
+                    <div class="w-12 h-12 bg-rose-500/20 rounded-2xl flex items-center justify-center group-hover:bg-rose-500/30 transition-all duration-300">
+                      <i class="fas fa-sign-out-alt text-rose-300 text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                      <span class="font-bold text-rose-200 text-lg">Logout</span>
+                      <p class="text-rose-200/70 text-sm">Sign out safely</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-rose-200/40 group-hover:text-rose-200 transition-colors duration-300"></i>
+                </button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" class="mobile-nav-modern group" onclick="toggleMobileMenu()">
+              <div class="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center group-hover:bg-purple-500/30 transition-all duration-300">
+                <i class="fas fa-sign-in-alt text-purple-300 text-lg"></i>
+              </div>
+              <div class="flex-1">
+                <span class="font-bold text-white text-lg">Login</span>
+                <p class="text-purple-200 text-sm">Access your account</p>
+              </div>
+              <i class="fas fa-chevron-right text-white/40 group-hover:text-white transition-colors duration-300"></i>
+            </a>
+            <a href="{% url 'register' %}" class="mobile-nav-modern group" onclick="toggleMobileMenu()">
+              <div class="w-12 h-12 bg-green-500/20 rounded-2xl flex items-center justify-center group-hover:bg-green-500/30 transition-all duration-300">
+                <i class="fas fa-user-plus text-green-300 text-lg"></i>
+              </div>
+              <div class="flex-1">
+                <span class="font-bold text-white text-lg">Register</span>
+                <p class="text-purple-200 text-sm">Create new account</p>
+              </div>
+              <i class="fas fa-chevron-right text-white/40 group-hover:text-white transition-colors duration-300"></i>
+            </a>
+          {% endif %}
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Messages Display -->
+  {% if messages %}
+  <div class="w-full px-4 sm:px-6 mt-6">
+    {% for message in messages %}
+      <div class="message-modern {% if message.tags == 'error' %}message-error-modern{% elif message.tags == 'success' %}message-success-modern{% elif message.tags == 'warning' %}message-warning-modern{% else %}message-info-modern{% endif %}">
+        <div class="flex items-center space-x-3">
+          {% if message.tags == 'error' %}
+            <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
+              <i class="fas fa-exclamation-triangle text-rose-600 text-lg"></i>
+            </div>
+          {% elif message.tags == 'success' %}
+            <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+              <i class="fas fa-check-circle text-emerald-600 text-lg"></i>
+            </div>
+          {% elif message.tags == 'warning' %}
+            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+              <i class="fas fa-exclamation-circle text-amber-600 text-lg"></i>
+            </div>
+          {% else %}
+            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+              <i class="fas fa-info-circle text-purple-600 text-lg"></i>
+            </div>
+          {% endif %}
+          <div class="flex-1">
+            <p class="font-semibold text-gray-900">{{ message }}</p>
+          </div>
+        </div>
+        <button class="message-close-modern group" onclick="this.parentElement.style.opacity='0'; setTimeout(() => this.parentElement.remove(), 300)">
+          <i class="fas fa-times text-gray-400 group-hover:text-gray-600 transition-colors duration-200"></i>
+        </button>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Main Content -->
+  <main class="min-h-screen">
+    {% block content %}
+    {% endblock content %}
+    
+    {% block extra_content %}
+    {% endblock extra_content %}
+  </main>
+
+  <!-- Enhanced Footer -->
+  <footer class="bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 text-white pt-16 pb-12 mt-20 relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-5">
+      <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.1\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"1\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+        <!-- Company Info -->
+        <div class="lg:col-span-2">
+          <div class="flex items-center space-x-4 mb-6">
+            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-heart-pulse text-white text-2xl"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-black text-white">MediCare+</h3>
+              <p class="text-purple-300 text-sm font-semibold tracking-wider">PREMIUM HEALTHCARE EXPERIENCE</p>
+            </div>
+          </div>
+          <p class="text-gray-300 mb-6 text-lg leading-relaxed max-w-2xl">
+            Revolutionizing healthcare with cutting-edge technology and compassionate care. 
+            Your wellness journey starts here with trusted medical professionals.
+          </p>
+          <div class="flex space-x-3">
+            <a href="#" class="social-modern group">
+              <i class="fab fa-facebook-f text-sm"></i>
+            </a>
+            <a href="#" class="social-modern group">
+              <i class="fab fa-twitter text-sm"></i>
+            </a>
+            <a href="#" class="social-modern group">
+              <i class="fab fa-instagram text-sm"></i>
+            </a>
+            <a href="#" class="social-modern group">
+              <i class="fab fa-linkedin-in text-sm"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="font-bold text-xl mb-6 text-white border-b border-purple-700 pb-3">Quick Links</h4>
+          <ul class="space-y-3">
+            <li><a href="{% url 'home' %}" class="footer-modern group">
+              <i class="fas fa-chevron-right text-purple-400 text-xs mr-3 group-hover:translate-x-1 transition-transform duration-200"></i>
+              <span>Home</span>
+            </a></li>
+            <li><a href="{% url 'doctors' %}" class="footer-modern group">
+              <i class="fas fa-chevron-right text-purple-400 text-xs mr-3 group-hover:translate-x-1 transition-transform duration-200"></i>
+              <span>Find Doctors</span>
+            </a></li>
+            <li><a href="{% url 'all_reviews' %}" class="footer-modern group">
+              <i class="fas fa-chevron-right text-purple-400 text-xs mr-3 group-hover:translate-x-1 transition-transform duration-200"></i>
+              <span>Patient Reviews</span>
+            </a></li>
+            <li><a href="#" class="footer-modern group">
+              <i class="fas fa-chevron-right text-purple-400 text-xs mr-3 group-hover:translate-x-1 transition-transform duration-200"></i>
+              <span>About Us</span>
+            </a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Info -->
+        <div>
+          <h4 class="font-bold text-xl mb-6 text-white border-b border-purple-700 pb-3">Contact Us</h4>
+          <ul class="space-y-4">
+            <li class="flex items-center space-x-4 group">
+              <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300">
+                <i class="fas fa-phone text-white text-sm"></i>
+              </div>
+              <div>
+                <p class="text-gray-300 text-sm">Emergency</p>
+                <p class="text-white font-semibold group-hover:text-purple-300 transition-colors duration-300">+1 (555) 123-4567</p>
+              </div>
+            </li>
+            <li class="flex items-center space-x-4 group">
+              <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300">
+                <i class="fas fa-envelope text-white text-sm"></i>
+              </div>
+              <div>
+                <p class="text-gray-300 text-sm">Email</p>
+                <p class="text-white font-semibold group-hover:text-green-300 transition-colors duration-300">support@medicare.com</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="border-t border-gray-700 pt-8 text-center">
+        <p class="text-gray-400 text-sm mb-2">
+          &copy; 2025 MediCare+. All Rights Reserved.
+        </p>
+        <p class="text-gray-500 text-xs">Delivering exceptional healthcare experiences with innovation and care</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button id="backToTop" class="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-br from-purple-600 to-pink-600 text-white rounded-2xl shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/40 transition-all duration-300 hover:scale-110 hover:-translate-y-1 z-40 hidden items-center justify-center">
+    <i class="fas fa-chevron-up text-lg"></i>
+  </button>
+
+  <script>
+    // Loading Spinner
+    window.addEventListener('load', function() {
+      const spinner = document.getElementById('loadingSpinner');
+      spinner.style.opacity = '0';
+      setTimeout(() => spinner.style.display = 'none', 500);
+    });
+
+    // Mobile Menu Toggle
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('translate-x-0');
+      document.body.style.overflow = menu.classList.contains('translate-x-0') ? 'hidden' : '';
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('mobileMenu');
+      const menuButton = event.target.closest('button');
+      
+      if (menu.classList.contains('translate-x-0') && !menu.contains(event.target) && (!menuButton || !menuButton.onclick)) {
+        toggleMobileMenu();
+      }
+    });
+
+    // Back to Top Button
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset > 300) {
+        backToTop.classList.remove('hidden');
+      } else {
+        backToTop.classList.add('hidden');
+      }
+    });
+
+    backToTop.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Add active class to current page link
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentPath = window.location.pathname;
+      const navLinks = document.querySelectorAll('.nav-modern');
+      
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Auto-hide messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+      const messages = document.querySelectorAll('.message-modern');
+      messages.forEach(message => {
+        setTimeout(() => {
+          message.style.opacity = '0';
+          message.style.transform = 'translateY(-10px)';
+          setTimeout(() => message.remove(), 300);
+        }, 5000);
+      });
+    });
+  </script>
+</body>
+</html>

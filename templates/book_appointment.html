@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Book Appointment with Dr. {{ doctor.name }}{% endblock title %}
+
+{% block extra_content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <div class="w-24 h-24 mx-auto bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center mb-6 shadow-2xl">
+        <i class="fas fa-calendar-plus text-white text-3xl"></i>
+      </div>
+      <h1 class="text-4xl font-black text-gray-900 mb-4">Book Appointment</h1>
+      <p class="text-xl text-gray-600">Schedule your in-person consultation</p>
+    </div>
+
+    <!-- Appointment Card -->
+    <div class="bg-white rounded-3xl p-8 border-2 border-blue-300 shadow-2xl hover:shadow-3xl transition-all duration-500">
+      <!-- Doctor Info -->
+      <div class="flex items-center gap-8 mb-10 pb-10 border-b-2 border-gray-300">
+        {% if doctor.image %}
+          <img src="{{ doctor.image.url }}" alt="Dr. {{ doctor.name }} - {{ doctor.get_specialization_display }}" 
+               class="w-28 h-28 rounded-2xl object-cover border-4 border-blue-200 shadow-xl">
+        {% else %}
+          <div class="w-28 h-28 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border-4 border-blue-200 shadow-xl">
+            <i class="fas fa-user-md text-blue-400 text-3xl"></i>
+          </div>
+        {% endif %}
+        <div class="flex-1">
+          <h2 class="text-3xl font-black text-gray-900">Dr. {{ doctor.name }}</h2>
+          <p class="text-xl text-blue-600 font-bold mt-2">{{ doctor.get_specialization_display }}</p>
+          <div class="flex flex-wrap gap-4 mt-4">
+            <span class="bg-gradient-to-r from-green-100 to-emerald-100 px-4 py-2 rounded-2xl border-2 border-green-200 shadow-lg">
+              <i class="fas fa-rupee-sign text-green-600 mr-2"></i>
+              <span class="font-black text-green-700 text-lg">₹{{ doctor.fee }}</span>
+            </span>
+            <span class="bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-2xl border-2 border-purple-200 shadow-lg">
+              <i class="fas fa-hospital text-purple-600 mr-2"></i>
+              <span class="font-semibold text-purple-700">{{ doctor.hospital }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Messages -->
+      {% if error %}
+        <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 mb-8 border-2 border-red-300 shadow-lg">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+            </div>
+            <span class="font-bold text-red-700 text-lg">{{ error }}</span>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="{% if message.tags == 'error' %}bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-300 text-red-700{% else %}bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 text-green-700{% endif %} rounded-2xl p-6 mb-8 shadow-lg">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 {% if message.tags == 'error' %}bg-gradient-to-br from-red-500 to-orange-600{% else %}bg-gradient-to-br from-green-500 to-emerald-600{% endif %} rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %} text-white text-xl"></i>
+              </div>
+              <span class="font-bold text-lg">{{ message }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- Booking Form -->
+      <form method="post" action="{% url 'book_appointment' doctor.id %}" class="space-y-8">
+        {% csrf_token %}
+        
+        <!-- Patient Name Field -->
+        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-8 border-2 border-indigo-300 shadow-lg">
+          <label for="patient_name" class="block text-lg font-black text-gray-900 mb-4 flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-user text-white text-lg"></i>
+            </div>
+            Patient Name *
+          </label>
+          <input 
+            type="text" 
+            id="patient_name"
+            name="patient_name" 
+            required 
+            placeholder="Enter patient's full name"
+            class="w-full border-2 border-indigo-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 bg-white shadow-lg"
+          />
+          <p class="text-sm text-gray-600 mt-3 flex items-center gap-2">
+            <i class="fas fa-info-circle text-indigo-500"></i>
+            This name will appear on your receipt
+          </p>
+        </div>
+
+        <!-- Date and Time Selection -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 border-2 border-blue-300 shadow-lg">
+            <label for="date" class="block text-lg font-black text-gray-900 mb-4 flex items-center gap-3">
+              <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-calendar-day text-white text-lg"></i>
+              </div>
+              Choose Date
+            </label>
+            <input 
+              type="date" 
+              id="date"
+              name="date" 
+              required 
+              min="{% now 'Y-m-d' %}"
+              class="w-full border-2 border-blue-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white shadow-lg"
+            />
+            <p class="text-sm text-gray-600 mt-3 flex items-center gap-2">
+              <i class="fas fa-info-circle text-blue-500"></i>
+              Select a future date
+            </p>
+          </div>
+          
+          <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 border-2 border-green-300 shadow-lg">
+            <label for="time" class="block text-lg font-black text-gray-900 mb-4 flex items-center gap-3">
+              <div class="w-12 h-12 bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-clock text-white text-lg"></i>
+              </div>
+              Choose Time
+            </label>
+            <input 
+              type="time" 
+              id="time"
+              name="time" 
+              required 
+              min="09:00" 
+              max="18:00"
+              class="w-full border-2 border-green-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 bg-white shadow-lg"
+            />
+            <p class="text-sm text-gray-600 mt-3 flex items-center gap-2">
+              <i class="fas fa-info-circle text-green-500"></i>
+              Clinic hours: 9:00 AM - 6:00 PM
+            </p>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border-2 border-purple-300 shadow-lg">
+          <label for="notes" class="block text-lg font-black text-gray-900 mb-4 flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-700 rounded-2xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-sticky-note text-white text-lg"></i>
+            </div>
+            Additional Notes (Optional)
+          </label>
+          <textarea 
+            id="notes"
+            name="notes" 
+            rows="4" 
+            placeholder="Any specific symptoms or concerns you'd like to mention..."
+            class="w-full border-2 border-purple-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white shadow-lg resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-3xl p-8 border-2 border-orange-300 shadow-lg">
+          <div class="flex items-start gap-6">
+            <div class="w-16 h-16 bg-gradient-to-br from-orange-600 to-amber-700 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+              <i class="fas fa-file-contract text-white text-2xl"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-black text-2xl mb-6 text-orange-800">Terms & Conditions</h4>
+              <ul class="text-orange-700 space-y-4 text-lg">
+                <li class="flex items-start gap-4">
+                  <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fas fa-clock text-orange-600"></i>
+                  </div>
+                  <span><strong class="font-black">Minimum Booking:</strong> Appointments must be booked at least 2 hours in advance</span>
+                </li>
+                <li class="flex items-start gap-4">
+                  <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fas fa-download text-orange-600"></i>
+                  </div>
+                  <span><strong class="font-black">Receipt Download:</strong> Available only 1 hour before appointment time</span>
+                </li>
+                <li class="flex items-start gap-4">
+                  <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fas fa-times-circle text-orange-600"></i>
+                  </div>
+                  <span><strong class="font-black">Cancellation:</strong> Free cancellation up to 1 hour before appointment</span>
+                </li>
+                <li class="flex items-start gap-4">
+                  <div class="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fas fa-rupee-sign text-orange-600"></i>
+                  </div>
+                  <span><strong class="font-black">No-show Policy:</strong> Full fee charged for missed appointments</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appointment Instructions -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-2xl">
+          <div class="flex items-start gap-6">
+            <div class="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+              <i class="fas fa-info-circle text-white text-2xl"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-black text-2xl mb-6">In-Person Appointment Instructions</h4>
+              <ul class="text-blue-100 space-y-4 text-lg">
+                <li class="flex items-center gap-4">
+                  <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-check text-white text-sm"></i>
+                  </div>
+                  Please arrive 15 minutes before your scheduled time
+                </li>
+                <li class="flex items-center gap-4">
+                  <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-check text-white text-sm"></i>
+                  </div>
+                  Bring your ID and any medical reports
+                </li>
+                <li class="flex items-center gap-4">
+                  <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-check text-white text-sm"></i>
+                  </div>
+                  <strong>Location:</strong> {{ doctor.hospital }}, {{ doctor.address }}
+                </li>
+                <li class="flex items-center gap-4">
+                  <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-check text-white text-sm"></i>
+                  </div>
+                  Download receipt 1 hour before appointment for verification
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-6 pt-8">
+          <button 
+            type="submit" 
+            class="flex-1 bg-gradient-to-r from-green-600 to-emerald-700 text-white font-black py-5 px-8 rounded-2xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-4 text-xl"
+          >
+            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+              <i class="fas fa-calendar-check text-xl"></i>
+            </div>
+            <span>Confirm Booking - ₹{{ doctor.fee }}</span>
+          </button>
+          
+          <a 
+            href="{% url 'doctor_detail' doctor.id %}" 
+            class="flex-1 bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-black py-5 px-8 rounded-2xl border-2 border-gray-400 shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-4 text-xl"
+          >
+            <div class="w-12 h-12 bg-gray-500 bg-opacity-10 rounded-2xl flex items-center justify-center">
+              <i class="fas fa-arrow-left text-xl"></i>
+            </div>
+            <span>Back to Profile</span>
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Help Section -->
+    <div class="mt-12 text-center">
+      <div class="bg-white rounded-3xl p-8 border-2 border-blue-300 shadow-2xl">
+        <div class="flex items-center justify-center gap-4 mb-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-headset text-white text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-black text-gray-900">Need Help?</h3>
+        </div>
+        <p class="text-gray-600 text-lg mb-4">Our support team is here to assist you</p>
+        <a href="mailto:medicareplus.support@gmail.com" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-3 text-lg">
+          <i class="fas fa-envelope"></i>
+          support@medicare.com
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const dateInput = document.getElementById('date');
+  const timeInput = document.getElementById('time');
+  
+  // Set minimum time based on current time for today's date
+  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const currentHours = now.getHours().toString().padStart(2, '0');
+  const currentMinutes = now.getMinutes().toString().padStart(2, '0');
+  const currentTime = `${currentHours}:${currentMinutes}`;
+  
+  dateInput.addEventListener('change', function() {
+    if (this.value === today) {
+      timeInput.min = currentTime;
+    } else {
+      timeInput.min = '09:00';
+    }
+  });
+});
+</script>
+{% endblock extra_content %}

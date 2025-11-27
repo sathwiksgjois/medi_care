@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Complete Payment | MediCare+{% endblock title %}
+
+{% block extra_content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6">
+        <!-- Payment Header -->
+        <div class="text-center mb-12">
+            <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                <i class="fas fa-credit-card text-white text-2xl"></i>
+            </div>
+            <h1 class="text-4xl font-black text-gray-900 mb-4">Complete Payment</h1>
+            <p class="text-xl text-gray-600">Secure payment for your appointment with Dr. {{ appointment.doctor.name }}</p>
+        </div>
+
+        <!-- Appointment Summary -->
+        <div class="bg-white rounded-3xl p-8 mb-8 border-2 border-blue-200 shadow-2xl hover:shadow-3xl transition-all duration-500">
+            <div class="flex items-center gap-6 mb-6">
+                {% if appointment.doctor.image %}
+                    <img src="{{ appointment.doctor.image.url }}" 
+                         alt="Dr. {{ appointment.doctor.name }}" 
+                         class="w-20 h-20 rounded-2xl object-cover border-4 border-blue-100 shadow-lg">
+                {% else %}
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center border-4 border-blue-100 shadow-lg">
+                        <i class="fas fa-user-md text-blue-400 text-2xl"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <h3 class="text-2xl font-black text-gray-900">Dr. {{ appointment.doctor.name }}</h3>
+                    <p class="text-blue-600 font-semibold text-lg">{{ appointment.doctor.get_specialization_display }}</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 text-lg">
+                <div class="bg-gray-50 rounded-2xl p-4 border-2 border-gray-200">
+                    <p class="text-gray-500 text-sm font-semibold mb-2">Date</p>
+                    <p class="font-bold text-gray-900">{{ appointment.date }}</p>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-4 border-2 border-gray-200">
+                    <p class="text-gray-500 text-sm font-semibold mb-2">Time</p>
+                    <p class="font-bold text-gray-900">{{ appointment.time }}</p>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-4 border-2 border-gray-200">
+                    <p class="text-gray-500 text-sm font-semibold mb-2">Type</p>
+                    <p class="font-bold text-gray-900">{{ appointment.get_appointment_type_display }}</p>
+                </div>
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-4 border-2 border-green-200">
+                    <p class="text-gray-500 text-sm font-semibold mb-2">Amount</p>
+                    <p class="font-black text-green-600 text-xl">₹{{ appointment.fee }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Section -->
+        <div class="bg-white rounded-3xl p-8 border-2 border-purple-200 shadow-2xl">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-black text-gray-900 mb-2">Payment Details</h3>
+                <p class="text-gray-600">Choose your preferred payment method</p>
+            </div>
+            
+            <!-- Razorpay Payment Button -->
+            <div id="razorpay-container" class="text-center mb-8">
+                <button id="pay-button" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-black py-5 px-8 rounded-2xl text-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 shadow-lg">
+                    <i class="fas fa-lock mr-3"></i>
+                    Pay ₹{{ appointment.fee }} Now
+                </button>
+                
+                <p class="text-sm text-gray-500 mt-4 flex items-center justify-center gap-2">
+                    <i class="fas fa-shield-alt text-green-500"></i>
+                    Secure payment powered by Razorpay
+                </p>
+            </div>
+
+            <!-- Demo Payment Option (for testing) -->
+            {% if debug %}
+            <div class="mt-8 pt-8 border-t-2 border-gray-200">
+                <h4 class="text-lg font-bold text-gray-700 mb-4 text-center">Demo Payment (Testing)</h4>
+                <form method="POST" action="{% url 'demo_payment_success' appointment.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold py-4 px-8 rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-300 shadow-lg flex items-center justify-center gap-3">
+                        <i class="fas fa-vial"></i>
+                        Complete Demo Payment
+                    </button>
+                </form>
+                <p class="text-xs text-gray-500 mt-3 text-center">Use this for testing without real payment</p>
+            </div>
+            {% endif %}
+
+            <!-- Payment Security Info -->
+            <div class="mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <i class="fas fa-shield-alt text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-blue-800 text-lg mb-2">Payment Security</h4>
+                        <p class="text-blue-700">
+                            Your payment is securely processed by Razorpay. We do not store your card details. 
+                            All transactions are encrypted and PCI DSS compliant.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Information -->
+        <div class="text-center mt-8 bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-lg">
+            <div class="flex items-center justify-center gap-3 mb-3">
+                <i class="fas fa-headset text-purple-600 text-xl"></i>
+                <h4 class="font-bold text-gray-900 text-lg">Need Help?</h4>
+            </div>
+            <p class="text-gray-600 mb-4">Our support team is here to assist you</p>
+            <a href="mailto:medicareplus.support@gmail.com" 
+               class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-2">
+                <i class="fas fa-envelope"></i>
+                support@medicare.com
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Razorpay Integration Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById('pay-button').onclick = function(e) {
+    var options = {
+        "key": "{{ razorpay_key_id }}",
+        "amount": "{{ amount }}", 
+        "currency": "{{ currency }}",
+        "name": "MediCare+",
+        "description": "Appointment with Dr. {{ appointment.doctor.name }}",
+        "image": "{% static 'images/logo.png' %}",
+        "order_id": "{{ razorpay_order_id }}",
+        "handler": function (response){
+            // Submit payment details to your server
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{% url 'verify_payment' %}";
+            
+            const appointmentId = document.createElement('input');
+            appointmentId.type = 'hidden';
+            appointmentId.name = 'appointment_id';
+            appointmentId.value = '{{ appointment.id }}';
+            
+            const paymentId = document.createElement('input');
+            paymentId.type = 'hidden';
+            paymentId.name = 'razorpay_payment_id';
+            paymentId.value = response.razorpay_payment_id;
+            
+            const orderId = document.createElement('input');
+            orderId.type = 'hidden';
+            orderId.name = 'razorpay_order_id';
+            orderId.value = response.razorpay_order_id;
+            
+            const signature = document.createElement('input');
+            signature.type = 'hidden';
+            signature.name = 'razorpay_signature';
+            signature.value = response.razorpay_signature;
+            
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = 'csrfmiddlewaretoken';
+            csrfToken.value = '{{ csrf_token }}';
+            
+            form.appendChild(appointmentId);
+            form.appendChild(paymentId);
+            form.appendChild(orderId);
+            form.appendChild(signature);
+            form.appendChild(csrfToken);
+            
+            document.body.appendChild(form);
+            form.submit();
+        },
+        "prefill": {
+            "name": "{{ user.name|default:user.username }}",
+            "email": "{{ user.email }}",
+            "contact": "{{ user.contact|default:'9999999999' }}"
+        },
+        "theme": {
+            "color": "#10b981"
+        },
+        "modal": {
+            "ondismiss": function(){
+                console.log('Payment cancelled');
+            }
+        }
+    };
+    
+    var rzp = new Razorpay(options);
+    rzp.open();
+    e.preventDefault();
+}
+</script>
+{% endblock extra_content %}

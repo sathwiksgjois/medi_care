@@ -1,0 +1,21 @@
+from django.urls import path
+from . import views
+from django.conf import settings
+from django.conf.urls.static import static
+urlpatterns = [
+    path('', views.home, name='home'),
+    path('home/', views.home, name='home'),
+    path('medicine/', views.medicines, name='Medicine'),
+    path('medicine/<int:id>/', views.medicine_detail, name='medicine_detail'),
+    path('doctors/', views.doctors, name='doctors'),
+    path('doctors/<int:id>/', views.doctor_detail, name='doctor_detail'),
+    path("orders/", views.order_list, name="order_list"),
+    path("orders/<int:order_id>/", views.order_detail, name="order_detail"),
+    path("orders/create/<int:product_id>/", views.create_order, name="create_order"),
+    path('payments/create/<int:appointment_id>/', views.create_payment_order, name='create_payment_order'),\n    path('payments/verify/', views.verify_payment, name='verify_payment'),\n    path('payments/create/<int:appointment_id>/', views.create_payment_order, name='create_payment_order'),\n    path('payments/verify/', views.verify_payment, name='verify_payment'),\n    path("doctor/<int:doctor_id>/book/<str:appointment_type>/", views.book_appointment, name="book_appointment"),
+    path("appointment/success/<int:appointment_id>/", views.appointment_success, name="appointment_success"),
+    path("my_appointments/", views.my_appointments, name="my_appointments"),
+    path("order/<int:order_id>/cancel/", views.cancel_order, name="cancel_order"),
+    path("appointment/<int:appointment_id>/cancel/", views.cancel_appointment, name="cancel_appointment"),
+    path("search/", views.unified_search, name="unified_search"),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

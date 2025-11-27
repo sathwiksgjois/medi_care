@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Register | MediCare+{% endblock title %}
+
+{% block extra_content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 py-12 flex flex-col justify-center">
+    <div class="max-w-md mx-auto bg-white rounded-3xl border-2 border-green-300 shadow-2xl p-10">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-green-600 to-emerald-700 rounded-3xl flex items-center justify-center mb-6 shadow-2xl">
+                <i class="fas fa-user-plus text-white text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-black text-gray-900 mb-3">Create Account</h1>
+            <p class="text-xl text-gray-600">Join MediCare+ today for better healthcare</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border-2 border-red-300">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                    </div>
+                    <span class="font-bold text-red-800 text-lg">Please correct the errors below:</span>
+                </div>
+                <ul class="text-red-700 space-y-2 ml-2">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                                {{ error }}
+                            </li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                            {{ error }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-300">
+                <label for="id_username" class="block text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    Username
+                </label>
+                <input type="text" 
+                       name="username" 
+                       id="id_username"
+                       required 
+                       class="w-full border-2 border-blue-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white shadow-lg"
+                       placeholder="Choose a username"
+                       value="{{ form.username.value|default:'' }}">
+                {% if form.username.help_text %}
+                <p class="text-sm text-gray-600 mt-3 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-blue-500"></i>
+                    {{ form.username.help_text }}
+                </p>
+                {% endif %}
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-300">
+                <label for="id_password1" class="block text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-700 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-lock text-white"></i>
+                    </div>
+                    Password
+                </label>
+                <input type="password" 
+                       name="password1" 
+                       id="id_password1"
+                       required 
+                       class="w-full border-2 border-purple-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white shadow-lg"
+                       placeholder="Create a password">
+                {% if form.password1.help_text %}
+                <div class="text-sm text-gray-600 mt-3 flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-purple-500"></i>
+                    {{ form.password1.help_text }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-300">
+                <label for="id_password2" class="block text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-lock text-white"></i>
+                    </div>
+                    Confirm Password
+                </label>
+                <input type="password" 
+                       name="password2" 
+                       id="id_password2"
+                       required 
+                       class="w-full border-2 border-green-300 rounded-2xl px-6 py-4 text-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 bg-white shadow-lg"
+                       placeholder="Confirm your password">
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-black py-5 px-8 rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-4 text-xl shadow-2xl">
+                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                Create Account
+            </button>
+        </form>
+
+        <!-- Login Link -->
+        <div class="text-center mt-10 pt-10 border-t-2 border-gray-300">
+            <p class="text-gray-600 text-lg mb-4">Already have an account?</p>
+            <a href="{% url 'login' %}" 
+               class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center gap-3 shadow-lg">
+                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+                Sign In to Account
+            </a>
+        </div>
+
+        <!-- Benefits -->
+        <div class="mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-300">
+            <h3 class="font-bold text-blue-900 text-lg mb-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-gift text-white"></i>
+                </div>
+                Benefits of joining:
+            </h3>
+            <ul class="text-blue-800 space-y-3">
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    Book doctor appointments online
+                </li>
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    Manage your health records securely
+                </li>
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    Get smart appointment reminders
+                </li>
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    Access complete medical history
+                </li>
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    Rate and review healthcare providers
+                </li>
+            </ul>
+        </div>
+
+        <!-- Security Note -->
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-500 flex items-center justify-center gap-2">
+                <i class="fas fa-shield-alt text-green-500"></i>
+                Your data is protected with enterprise-grade security
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock extra_content %}

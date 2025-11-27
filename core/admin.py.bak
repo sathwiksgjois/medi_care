@@ -1,0 +1,15 @@
+from django.contrib import admin
+from .models import Product
+from .models import Doctor
+# Register your models here.
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'product_type', 'price', 'stock')
+    list_filter = ('product_type',)
+    search_fields = ('name', 'brand')
+@admin.register(Doctor)
+class DoctorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'specialization', 'experience', 'hospital', 'fee', 'booking_option')
+    list_filter = ('specialization', 'booking_option')
+    search_fields = ('name', 'hospital')

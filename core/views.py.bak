@@ -1,0 +1,276 @@
+import razorpay
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import Product
+from django.shortcuts import get_object_or_404
+from .models import Doctor
+from .models import Order, OrderItem, Appointment
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import datetime
+from django.db.models import Q
+from django.core.paginator import Paginator
+
+
+# Create your views here.
+
+def home(request):
+    return render(request, 'home.html')
+def medicines(request):
+    meds = Product.objects.filter(product_type="medicine")
+    return render(request, 'medicine.html', {'meds': meds})
+def medicine_detail(request, id):
+    medicine = get_object_or_404(Product, id=id, product_type="medicine")
+    return render(request, 'medicine_detail.html', {'medicine': medicine})
+def doctors(request):
+    doctors = Doctor.objects.all()
+    return render(request, 'doctors.html', {'doctors': doctors})
+def doctor_detail(request, id):
+    doctor = get_object_or_404(Doctor, id=id)
+    return render(request, 'doctor_detail.html', {'doctor': doctor})
+def order_medicine(request, id):
+    medicine = get_object_or_404(Product, id=id, product_type="medicine")
+    Order=Order.objects.create(user=request.user, product=medicine)
+def create_order(request, product_id):
+    """Create a new order with one product"""
+    product = get_object_or_404(Product, id=product_id, product_type="medicine")
+    order = Order.objects.create(user=request.user, total_price=product.price)
+    OrderItem.objects.create(order=order, product=product, quantity=1, price=product.price)
+    return redirect('order_detail', order_id=order.id)
+def order_detail(request, order_id):
+    """Show details of a particular order"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, "order_detail.html", {"order": order})
+def order_list(request):
+    """Show all orders for a logged-in user"""
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+    return render(request, "order_list.html", {"orders": orders})
+def cancel_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order.status = "cancelled"
+    order.save()
+    return redirect("order_list")  # adjust to your orders page
+
+def book_appointment(request, doctor_id, appointment_type):
+    doctor = get_object_or_404(Doctor, id=doctor_id)
+
+    # validate doctor supports requested appointment_type
+    if doctor.booking_option != "both" and doctor.booking_option != appointment_type:
+        return render(request, "booking_not_allowed.html", {"doctor": doctor, "appointment_type": appointment_type})
+
+    if request.method == "POST":
+        date_str = request.POST.get("date")
+        time_str = request.POST.get("time")
+
+        # basic validation
+        if not date_str or not time_str:
+            return render(request, "book_appointment.html", {
+                "doctor": doctor,
+                "appointment_type": appointment_type,
+                "error": "Please select both date and time."
+            })
+
+        # parse into datetime and ensure future datetime
+        try:
+            naive_dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+            aware_dt = timezone.make_aware(naive_dt) if timezone.is_naive(naive_dt) else naive_dt
+        except Exception:
+            return render(request, "book_appointment.html", {
+                "doctor": doctor,
+                "appointment_type": appointment_type,
+                "error": "Invalid date/time format."
+            })
+
+        if aware_dt <= timezone.now():
+            return render(request, "book_appointment.html", {
+                "doctor": doctor,
+                "appointment_type": appointment_type,
+                "error": "Please choose a future date and time."
+            })
+
+        # create appointment (snapshot fee)
+        appointment = Appointment.objects.create(
+            user=request.user,
+            doctor=doctor,
+            appointment_type=appointment_type,
+            fee=doctor.fee,
+            date=date_str,
+            time=time_str
+        )
+
+        return redirect("appointment_success", appointment_id=appointment.id)
+
+    # GET -> show booking form
+    return render(request, "book_appointment.html", {
+        "doctor": doctor,
+        "appointment_type": appointment_type,
+    })
+
+
+def appointment_success(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, user=request.user)
+    return render(request, "appointment_success.html", {"appointment": appointment})
+def my_appointments(request):
+    appointments = Appointment.objects.filter(user=request.user).order_by("-id")
+    return render(request, "my_appointments.html", {"appointments": appointments})
+def cancel_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, user=request.user)
+    appointment.status = "cancelled"
+    appointment.save()
+    return redirect("my_appointments")
+def unified_search(request):
+    q = request.GET.get("q", "").strip()
+    tab = request.GET.get("tab", "products")  # default show products tab
+
+    # --- Products ---
+    product_qs = Product.objects.all()
+    if q:
+        product_qs = product_qs.filter(
+            Q(name__icontains=q) |
+            Q(brand__icontains=q) |
+            Q(dosage__icontains=q)
+        )
+    product_qs = product_qs.order_by("name")
+
+    paginator_p = Paginator(product_qs, 9)
+    page_p = request.GET.get("page_p", 1)
+    products = paginator_p.get_page(page_p)
+
+    # --- Doctors ---
+    doctor_qs = Doctor.objects.all()
+    if q:
+        doctor_qs = doctor_qs.filter(
+            Q(name__icontains=q) |
+            Q(specialization__icontains=q) |
+            Q(hospital__icontains=q) |
+            Q(city__icontains=q)
+        )
+    doctor_qs = doctor_qs.order_by("name")
+
+    paginator_d = Paginator(doctor_qs, 6)
+    page_d = request.GET.get("page_d", 1)
+    doctors = paginator_d.get_page(page_d)
+
+    return render(request, "unified_search.html", {
+        "q": q,
+        "tab": tab,
+        "products": products,
+        "doctors": doctors,
+    })
+
+
+import razorpay
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.http import JsonResponse
+
+# Razorpay integration for appointment payments
+def create_payment_order(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, user=request.user)
+    if appointment.status != 'pending':
+        return render(request, "appointment_already_paid.html", {"appointment": appointment})
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    amount_paisa = int(appointment.fee * 100)
+    DATA = {
+        "amount": amount_paisa,
+        "currency": "INR",
+        "receipt": f"appointment_{appointment.id}",
+        "payment_capture": 1
+    }
+    order = client.order.create(data=DATA)
+    appointment.razorpay_order_id = order['id']
+    appointment.save()
+    return render(request, "appointment_payment.html", {
+        "appointment": appointment,
+        "razorpay_order_id": order['id'],
+        "razorpay_key_id": settings.RAZORPAY_KEY_ID,
+        "amount": amount_paisa,
+    })
+
+@csrf_exempt
+def verify_payment(request):
+    if request.method != "POST":
+        return JsonResponse({"error":"POST required"}, status=400)
+    payload = request.POST
+    razorpay_order_id = payload.get("razorpay_order_id")
+    razorpay_payment_id = payload.get("razorpay_payment_id")
+    razorpay_signature = payload.get("razorpay_signature")
+    appointment_id = payload.get("appointment_id")
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    params_dict = {
+        'razorpay_order_id': razorpay_order_id,
+        'razorpay_payment_id': razorpay_payment_id,
+        'razorpay_signature': razorpay_signature
+    }
+    try:
+        client.utility.verify_payment_signature(params_dict)
+    except razorpay.errors.SignatureVerificationError:
+        appointment.status = 'cancelled'
+        appointment.save()
+        return JsonResponse({"status":"error","message":"Signature verification failed"}, status=400)
+    # success
+    appointment.status = 'confirmed'
+    appointment.payment_id = razorpay_payment_id
+    appointment.save()
+    return JsonResponse({"status":"success"})
+
+
+
+import razorpay
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.http import JsonResponse
+
+# Razorpay integration for appointment payments
+def create_payment_order(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, user=request.user)
+    if appointment.status != 'pending':
+        return render(request, "appointment_already_paid.html", {"appointment": appointment})
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    amount_paisa = int(appointment.fee * 100)
+    DATA = {
+        "amount": amount_paisa,
+        "currency": "INR",
+        "receipt": f"appointment_{appointment.id}",
+        "payment_capture": 1
+    }
+    order = client.order.create(data=DATA)
+    appointment.razorpay_order_id = order['id']
+    appointment.save()
+    return render(request, "appointment_payment.html", {
+        "appointment": appointment,
+        "razorpay_order_id": order['id'],
+        "razorpay_key_id": settings.RAZORPAY_KEY_ID,
+        "amount": amount_paisa,
+    })
+
+@csrf_exempt
+def verify_payment(request):
+    if request.method != "POST":
+        return JsonResponse({"error":"POST required"}, status=400)
+    payload = request.POST
+    razorpay_order_id = payload.get("razorpay_order_id")
+    razorpay_payment_id = payload.get("razorpay_payment_id")
+    razorpay_signature = payload.get("razorpay_signature")
+    appointment_id = payload.get("appointment_id")
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    params_dict = {
+        'razorpay_order_id': razorpay_order_id,
+        'razorpay_payment_id': razorpay_payment_id,
+        'razorpay_signature': razorpay_signature
+    }
+    try:
+        client.utility.verify_payment_signature(params_dict)
+    except razorpay.errors.SignatureVerificationError:
+        appointment.status = 'cancelled'
+        appointment.save()
+        return JsonResponse({"status":"error","message":"Signature verification failed"}, status=400)
+    # success
+    appointment.status = 'confirmed'
+    appointment.payment_id = razorpay_payment_id
+    appointment.save()
+    return JsonResponse({"status":"success"})
