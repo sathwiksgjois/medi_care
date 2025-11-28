@@ -57,6 +57,24 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+.menu-modern {
+  background: linear-gradient(134deg, #940e94, #cf3d56, #d72470) !important;
+  position: relative !important;
+  left: 0 !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* If it's a fixed/side menu */
+.menu-modern {
+  min-height: 100vh; /* Full height */
+}
+.menu-modern a:hover {
+  color: var(--primary);
+}
+
 /* Message Styles */
 .message-modern {
   border-radius: 1rem;

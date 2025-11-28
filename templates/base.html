@@ -104,10 +104,10 @@
           </a>
           {% endif %}
           
-          <a href="{% url 'all_reviews' %}" class="nav-modern group relative px-4 py-2.5 rounded-xl transition-all duration-300">
+          <a href="{% url 'all_reviews' %}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">
             <div class="flex items-center space-x-2">
               <i class="fas fa-star text-gray-600 group-hover:text-purple-600 transition-colors duration-300"></i>
-              <span class="font-semibold text-gray-700 group-hover:text-gray-900">Reviews</span>
+              <span class="font-semibold text-gray-700 group-hover:text-gray-900">My Reviews</span>
             </div>
             <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full transition-all duration-300 group-hover:w-3/4 group-hover:left-1/4"></div>
           </a>
@@ -182,7 +182,7 @@
         <i class="fas fa-times"></i>
       </button>
       
-      <nav class="space-y-3">
+      <nav class="space-y-3 menu-modern">
         <a href="{% url 'home' %}" class="mobile-nav-modern group" onclick="toggleMobileMenu()">
           <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center group-hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
             <i class="fas fa-home text-white text-lg"></i>
